@@ -27,6 +27,9 @@ class DataProcessor:
             )
             # timestamp is not used
             df = df.drop("timestamp", axis=1)
+            # user_id and item_id start from 0
+            df["user_id"] -= 1
+            df["item_id"] -= 1
             return df
 
     @staticmethod

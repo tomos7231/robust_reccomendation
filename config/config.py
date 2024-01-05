@@ -10,7 +10,7 @@ class DataConfig:
 @dataclass
 class PredictionConfig:
     model: str = "USERCF"  # or "ITEMCF" or "MF"
-    neighbors: int = 10
+    k: int = 5
     lr: float = 0.1
     epoch: int = 10
 
@@ -20,3 +20,4 @@ class MyConfig:
     data_cfg: DataConfig = DataConfig()
     train_cfg: PredictionConfig = PredictionConfig()
     seed: int = 42
+    name: str = "default"
