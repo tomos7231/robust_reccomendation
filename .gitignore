@@ -160,7 +160,5 @@ cython_debug/
 #.idea/
 
 data/
-processed_data/
-requirements-dev.lock
-requirements.lock
+outputs/
 *.DS_Store
