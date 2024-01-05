@@ -7,8 +7,12 @@ data:
     test_size: 0.2
 prediction:
     model: "USERCF"
+    # CF
     k: 5
-    lr: 0.1
-    epoch: 10
+    # MF
+    n_factors: 100
+    lr_all: 0.01
+    n_epochs: 30
+    reg_all: 0.02
 seed: 42
 name: default

@@ -20,7 +20,7 @@ def main(cfg: MyConfig):
     # uidでソートしてprint
     print(train_df.sort_values("user_id").head(10))
 
-    rating = predict_ratings(train_df, cfg.prediction.model)
+    rating = predict_ratings(cfg, train_df, cfg.prediction.model)
 
     print(rating[-1])
 

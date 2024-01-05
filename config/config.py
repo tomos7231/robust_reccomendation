@@ -11,8 +11,10 @@ class DataConfig:
 class PredictionConfig:
     model: str = "USERCF"  # or "ITEMCF" or "MF"
     k: int = 5
-    lr: float = 0.1
-    epoch: int = 10
+    n_factors: int = 100
+    n_epochs: int = 20
+    lr_all: float = 0.01
+    reg_all: float = 0.2
 
 
 @dataclass

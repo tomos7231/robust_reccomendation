@@ -1,11 +1,14 @@
+from __future__ import annotations
+
 from abc import ABCMeta, abstractmethod
 
+import pandas as pd
 from surprise import SVD, Dataset, KNNBasic, Reader
 from tqdm import tqdm
 
 
 class RecommenderSystem(metaclass=ABCMeta):
-    def __init__(self, train_df):
+    def __init__(self, train_df: pd.DataFrame):
         self.train_df = train_df
 
         # train_dfのカラムがuser_id, item_id, ratingの順番であることを保証する
@@ -28,7 +31,7 @@ class RecommenderSystem(metaclass=ABCMeta):
     def build_model(self):
         raise NotImplementedError
 
-    def predict_ratings(self):
+    def predict_ratings(self) -> list:
         # モデルをビルドしていない場合はエラーを投げる
         assert self.algo is not None, "You must build model before predicting ratings"
 
@@ -49,27 +52,40 @@ class RecommenderSystem(metaclass=ABCMeta):
 
 
 class SVDRecommender(RecommenderSystem):
-    def __init__(self, train_df):
+    def __init__(
+        self, train_df: pd.DataFrame, n_factors: int, n_epochs: int, lr_all: float, reg_all: float
+    ):
         super().__init__(train_df)
+        self.n_factors = n_factors
+        self.n_epochs = n_epochs
+        self.lr_all = lr_all
+        self.reg_all = reg_all
 
     def build_model(self):
-        self.algo = SVD()
+        self.algo = SVD(
+            n_factors=self.n_factors,
+            n_epochs=self.n_epochs,
+            lr_all=self.lr_all,
+            reg_all=self.reg_all,
+        )
         self.algo.fit(self.trainset)
 
 
 class UserKNNRecommender(RecommenderSystem):
-    def __init__(self, train_df):
+    def __init__(self, train_df: pd.DataFrame, k: int):
         super().__init__(train_df)
+        self.k = k
 
-    def build_model(self, k=5):
-        self.algo = KNNBasic(k=k, sim_options={"user_based": True})
+    def build_model(self):
+        self.algo = KNNBasic(k=self.k, sim_options={"user_based": True})
         self.algo.fit(self.trainset)
 
 
 class ItemKNNRecommender(RecommenderSystem):
-    def __init__(self, train_df):
+    def __init__(self, train_df: pd.DataFrame, k: int):
         super().__init__(train_df)
+        self.k = k
 
-    def build_model(self, k=5):
-        self.algo = KNNBasic(k=k, sim_options={"user_based": False})
+    def build_model(self):
+        self.algo = KNNBasic(k=self.k, sim_options={"user_based": False})
         self.algo.fit(self.trainset)
