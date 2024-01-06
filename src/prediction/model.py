@@ -1,16 +1,20 @@
 from __future__ import annotations
 
 from abc import ABCMeta, abstractmethod
+from typing import TypeVar
 
 import pandas as pd
-from surprise import SVD, Dataset, KNNBasic, Reader
+from surprise import SVD, Dataset, KNNBasic, Reader, accuracy
 from tqdm import tqdm
+
+logger = TypeVar("logger")
 
 
 class RecommenderSystem(metaclass=ABCMeta):
-    def __init__(self, train_df: pd.DataFrame, test_df: pd.DataFrame):
+    def __init__(self, train_df: pd.DataFrame, test_df: pd.DataFrame, logger: logger):
         self.train_df = train_df
         self.test_df = test_df
+        self.logger = logger
         self.algo = None
 
         # train_dfのカラムがuser_id, item_id, ratingの順番であることを保証する
@@ -26,6 +30,8 @@ class RecommenderSystem(metaclass=ABCMeta):
         # モデルの作成と学習
         self.build_model()
         self.fit_model()
+        # 評価
+        self.evaluate()
         # 予測
         prediction_df = self.predict_ratings()
         return prediction_df
@@ -51,9 +57,12 @@ class RecommenderSystem(metaclass=ABCMeta):
         raise NotImplementedError
 
     def fit_model(self) -> None:
-        # モデルがNoneでないことを保証
-        assert self.algo is not None, "You must build model before predicting ratings"
         self.algo.fit(self.trainset)
+
+    def evaluate(self) -> None:
+        predictions = self.algo.test(self.testset)
+        rmse = accuracy.rmse(predictions)
+        self.logger.info(f"RMSE of Test Data: {rmse}")
 
     def predict_ratings(self) -> pd.DataFrame:
         # 全ユーザーとアイテムの組み合わせを生成
@@ -97,12 +106,13 @@ class SVDRecommender(RecommenderSystem):
         self,
         train_df: pd.DataFrame,
         test_df: pd.DataFrame,
+        logger: logger,
         n_factors: int,
         n_epochs: int,
         lr_all: float,
         reg_all: float,
     ):
-        super().__init__(train_df, test_df)
+        super().__init__(train_df, test_df, logger)
         self.n_factors = n_factors
         self.n_epochs = n_epochs
         self.lr_all = lr_all
@@ -118,8 +128,8 @@ class SVDRecommender(RecommenderSystem):
 
 
 class UserKNNRecommender(RecommenderSystem):
-    def __init__(self, train_df: pd.DataFrame, test_df: pd.DataFrame, k: int):
-        super().__init__(train_df, test_df)
+    def __init__(self, train_df: pd.DataFrame, test_df: pd.DataFrame, logger: logger, k: int):
+        super().__init__(train_df, test_df, logger)
         self.k = k
 
     def build_model(self):
@@ -127,8 +137,8 @@ class UserKNNRecommender(RecommenderSystem):
 
 
 class ItemKNNRecommender(RecommenderSystem):
-    def __init__(self, train_df: pd.DataFrame, test_df: pd.DataFrame, k: int):
-        super().__init__(train_df, test_df)
+    def __init__(self, train_df: pd.DataFrame, test_df: pd.DataFrame, logger: logger, k: int):
+        super().__init__(train_df, test_df, logger)
         self.k = k
 
     def build_model(self):

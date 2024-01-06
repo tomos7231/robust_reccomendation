@@ -18,8 +18,15 @@ class PredictionConfig:
 
 
 @dataclass
+class OptimizationConfig:
+    delta: float = 0.5
+    estimator: str = "DIAG"
+
+
+@dataclass
 class MyConfig:
     data_cfg: DataConfig = DataConfig()
     train_cfg: PredictionConfig = PredictionConfig()
+    optim_cfg: OptimizationConfig = OptimizationConfig()
     seed: int = 42
     name: str = "default"
