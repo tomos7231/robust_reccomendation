@@ -18,11 +18,9 @@ def main(cfg: MyConfig):
 
     train_df, test_df = DataProcessor(cfg.data.name, cfg.data.test_size, cfg.seed).run()
     # uidでソートしてprint
-    print(train_df.sort_values("user_id").head(10))
+    print(train_df.sort_values(["user_id", "item_id"]).head(10))
 
-    rating = predict_ratings(cfg, train_df, cfg.prediction.model)
-
-    print(rating[-1])
+    predict_ratings(cfg, train_df, test_df, cfg.prediction.model)
 
 
 if __name__ == "__main__":

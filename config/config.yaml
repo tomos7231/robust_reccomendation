@@ -4,7 +4,7 @@ hydra:
 
 data:
     name: "movielens"
-    test_size: 0.2
+    test_size: 0.4
 prediction:
     model: "USERCF"
     # CF
