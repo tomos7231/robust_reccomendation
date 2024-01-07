@@ -15,7 +15,7 @@ class RecommenderSystem(metaclass=ABCMeta):
         self.train_df = train_df
         self.test_df = test_df
         self.logger = logger
-        self.algo = None
+        self.model = None
 
         # train_dfのカラムがuser_id, item_id, ratingの順番であることを保証する
         assert list(train_df.columns) == [
@@ -28,13 +28,17 @@ class RecommenderSystem(metaclass=ABCMeta):
         # データセットの作成
         self.trainset, self.testset = self.make_dataset(self.train_df, self.test_df)
         # モデルの作成と学習
-        self.build_model()
-        self.fit_model()
+        self.model = self.build_model()
+        self.fit_model(self.model, self.trainset)
         # 評価
-        self.evaluate()
+        self.evaluate(self.model, self.testset, self.logger)
         # 予測
-        prediction_df = self.predict_ratings()
-        return prediction_df
+        all_pred_df = self.predict_ratings(self.train_df, self.test_df, self.model)
+        return all_pred_df
+
+    @abstractmethod
+    def build_model(self) -> None:
+        raise NotImplementedError
 
     @staticmethod
     def make_dataset(train_df, test_df) -> tuple:
@@ -52,22 +56,21 @@ class RecommenderSystem(metaclass=ABCMeta):
 
         return trainset, testset
 
-    @abstractmethod
-    def build_model(self) -> None:
-        raise NotImplementedError
+    @staticmethod
+    def fit_model(model, trainset) -> None:
+        model.fit(trainset)
 
-    def fit_model(self) -> None:
-        self.algo.fit(self.trainset)
-
-    def evaluate(self) -> None:
-        predictions = self.algo.test(self.testset)
+    @staticmethod
+    def evaluate(model, testset, logger) -> None:
+        predictions = model.test(testset)
         rmse = accuracy.rmse(predictions)
-        self.logger.info(f"RMSE of Test Data: {rmse}")
+        logger.info(f"RMSE of Test Data: {rmse}")
 
-    def predict_ratings(self) -> pd.DataFrame:
+    @staticmethod
+    def predict_ratings(train_df: pd.DataFrame, test_df: pd.DataFrame, model) -> pd.DataFrame:
         # 全ユーザーとアイテムの組み合わせを生成
-        all_users = set(self.train_df["user_id"]).union(set(self.test_df["user_id"]))
-        all_items = set(self.train_df["item_id"]).union(set(self.test_df["item_id"]))
+        all_users = set(train_df["user_id"]).union(set(test_df["user_id"]))
+        all_items = set(train_df["item_id"]).union(set(test_df["item_id"]))
         all_combinations = [(user, item) for user in all_users for item in all_items]
 
         # 結果を保存するリスト
@@ -76,23 +79,19 @@ class RecommenderSystem(metaclass=ABCMeta):
         print("Predicting ratings...")
         for user, item in tqdm(all_combinations):
             # trainsetに存在するか確認
-            if not self.train_df[
-                (self.train_df["user_id"] == user) & (self.train_df["item_id"] == item)
-            ].empty:
-                actual_rating = self.train_df[
-                    (self.train_df["user_id"] == user) & (self.train_df["item_id"] == item)
+            if not train_df[(train_df["user_id"] == user) & (train_df["item_id"] == item)].empty:
+                actual_rating = train_df[
+                    (train_df["user_id"] == user) & (train_df["item_id"] == item)
                 ]["rating"].iloc[0]
                 predictions.append([user, item, actual_rating, "train"])
             # testsetに存在するか確認
-            elif not self.test_df[
-                (self.test_df["user_id"] == user) & (self.test_df["item_id"] == item)
-            ].empty:
-                predicted_rating = self.algo.predict(user, item).est
+            elif not test_df[(test_df["user_id"] == user) & (test_df["item_id"] == item)].empty:
+                predicted_rating = model.predict(user, item).est
                 predictions.append([user, item, predicted_rating, "test"])
             else:
                 # trainsetとtestsetのどちらにも存在しない場合
-                predicted_rating = self.algo.predict(user, item).est
-                predictions.append([user, item, predicted_rating, "temp"])
+                predicted_rating = model.predict(user, item).est
+                predictions.append([user, item, predicted_rating, "unknown"])
 
         predictions_df = pd.DataFrame(
             predictions, columns=["user_id", "item_id", "rating", "data_type"]
@@ -119,12 +118,13 @@ class SVDRecommender(RecommenderSystem):
         self.reg_all = reg_all
 
     def build_model(self):
-        self.algo = SVD(
+        model = SVD(
             n_factors=self.n_factors,
             n_epochs=self.n_epochs,
             lr_all=self.lr_all,
             reg_all=self.reg_all,
         )
+        return model
 
 
 class UserKNNRecommender(RecommenderSystem):
@@ -133,7 +133,8 @@ class UserKNNRecommender(RecommenderSystem):
         self.k = k
 
     def build_model(self):
-        self.algo = KNNBasic(k=self.k, sim_options={"user_based": True})
+        model = KNNBasic(k=self.k, sim_options={"user_based": True})
+        return model
 
 
 class ItemKNNRecommender(RecommenderSystem):
@@ -142,4 +143,5 @@ class ItemKNNRecommender(RecommenderSystem):
         self.k = k
 
     def build_model(self):
-        self.algo = KNNBasic(k=self.k, sim_options={"user_based": False})
+        model = KNNBasic(k=self.k, sim_options={"user_based": False})
+        return model

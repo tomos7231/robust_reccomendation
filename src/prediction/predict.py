@@ -30,7 +30,7 @@ def predict_ratings(
     else:
         raise Exception("Unknown model name: {}".format(model_name))
 
-    pred_all_df = model.run()
+    all_pred_df = model.run()
 
     # 保存
-    pred_all_df.to_csv(RESULT_DIR / cfg.name / "pred_rating.csv", index=False)
+    all_pred_df.to_csv(RESULT_DIR / cfg.name / "pred_rating.csv", index=False)

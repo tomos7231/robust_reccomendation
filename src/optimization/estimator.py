@@ -19,7 +19,7 @@ class ShrinkageEstimator(metaclass=ABCMeta):
         # 共分散行列の計算
         S, F = self.make_covariance_matrix()
         # 共分散行列の推定
-        cov_matrix = self.estimate_covariance_matrix(S, F, self.delta)
+        cov_matrix = self.calc_weighted_sum(S, F, self.delta)
         return cov_matrix
 
     @staticmethod
@@ -34,7 +34,7 @@ class ShrinkageEstimator(metaclass=ABCMeta):
         raise NotImplementedError
 
     @staticmethod
-    def estimate_covariance_matrix(S: np.ndarray, F: np.ndarray, delta: float) -> np.ndarray:
+    def calc_weighted_sum(S: np.ndarray, F: np.ndarray, delta: float) -> np.ndarray:
         # SとFを重み付けした共分散行列を計算
         return (1 - delta) * S + delta * F
 
