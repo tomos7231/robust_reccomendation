@@ -1,4 +1,5 @@
 import logging
+import os
 
 import hydra
 
@@ -21,7 +22,7 @@ def main(cfg: MyConfig):
     predict_ratings(cfg, train_df, test_df, logger, cfg.prediction.model)
 
     # 共分散行列の推定
-    make_covariance_matrix(cfg.optimization.delta, cfg.name, cfg.optimization.estimator)
+    make_covariance_matrix(cfg.optimization.delta, cfg.optimization.estimator)
 
 
 if __name__ == "__main__":

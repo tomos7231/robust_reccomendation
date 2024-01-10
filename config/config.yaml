@@ -1,4 +1,6 @@
 hydra:
+  job:
+    chdir: true
   run:
     dir: ./result/${name}
 

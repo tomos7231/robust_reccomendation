@@ -5,17 +5,14 @@ from abc import ABCMeta, abstractmethod
 import numpy as np
 import pandas as pd
 
-from src.paths import RESULT_DIR
-
 
 class ShrinkageEstimator(metaclass=ABCMeta):
-    def __init__(self, delta: float, exp_name: str):
+    def __init__(self, delta: float):
         self.delta = delta
-        self.exp_name = exp_name
 
     def run(self) -> pd.DataFrame:
         # データの読み込み
-        self.pred_rating_df = self.load_data(self.exp_name)
+        self.pred_rating_df = self.load_data()
         # 共分散行列の計算
         S, F = self.make_covariance_matrix()
         # 共分散行列の推定
@@ -23,8 +20,8 @@ class ShrinkageEstimator(metaclass=ABCMeta):
         return cov_matrix
 
     @staticmethod
-    def load_data(exp_name: str) -> pd.DataFrame:
-        pred_rating_df = pd.read_csv(RESULT_DIR / exp_name / "pred_rating.csv")
+    def load_data() -> pd.DataFrame:
+        pred_rating_df = pd.read_csv("./pred_rating.csv")
         pred_rating_df["user_id"] = pred_rating_df["user_id"].astype(int)
         pred_rating_df["item_id"] = pred_rating_df["item_id"].astype(int)
         return pred_rating_df
@@ -40,8 +37,8 @@ class ShrinkageEstimator(metaclass=ABCMeta):
 
 
 class DiagonalEstimator(ShrinkageEstimator):
-    def __init__(self, delta: float, exp_name: str):
-        super().__init__(delta, exp_name)
+    def __init__(self, delta: float):
+        super().__init__(delta)
 
     def make_covariance_matrix(self) -> tuple[np.ndarray, np.ndarray]:
         # 全てのアイテムのid
@@ -66,8 +63,8 @@ class DiagonalEstimator(ShrinkageEstimator):
 
 
 class InputationEstimator(ShrinkageEstimator):
-    def __init__(self, delta: float, exp_name: str):
-        super().__init__(delta, exp_name)
+    def __init__(self, delta: float):
+        super().__init__(delta)
 
     def make_covariance_matrix(self) -> tuple[np.ndarray, np.ndarray]:
         # 全てのアイテムのid

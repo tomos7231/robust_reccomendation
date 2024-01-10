@@ -4,18 +4,17 @@ import numpy as np
 import pandas as pd
 
 from src.optimization.estimator import DiagonalEstimator, InputationEstimator
-from src.paths import RESULT_DIR
 
 
-def make_covariance_matrix(delta: float, exp_name: str, estimator: str) -> np.ndarray:
+def make_covariance_matrix(delta: float, estimator: str) -> np.ndarray:
     if estimator == "DIAG":
-        estimator = DiagonalEstimator(delta, exp_name)
+        estimator = DiagonalEstimator(delta)
     elif estimator == "INPUTE":
-        estimator = InputationEstimator(delta, exp_name)
+        estimator = InputationEstimator(delta)
     else:
         raise Exception("Unknown estimator name: {}".format(estimator))
 
     cov_matrix = estimator.run()
 
     # 保存
-    np.save(RESULT_DIR / exp_name / "cov_matrix.npy", cov_matrix)
+    np.save("./cov_matrix.npy", cov_matrix)

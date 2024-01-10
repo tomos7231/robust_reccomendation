@@ -33,4 +33,4 @@ def predict_ratings(
     all_pred_df = model.run()
 
     # 保存
-    all_pred_df.to_csv(RESULT_DIR / cfg.name / "pred_rating.csv", index=False)
+    all_pred_df.to_csv("./pred_rating.csv", index=False)
