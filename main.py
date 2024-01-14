@@ -1,12 +1,9 @@
 import logging
-import os
 
 import hydra
 
 from config.config import MyConfig
-from src.optimization.estimator import DiagonalEstimator, InputationEstimator
 from src.optimization.make_covariance_matrix import make_covariance_matrix
-from src.paths import RESULT_DIR
 from src.prediction.predict import predict_ratings
 from src.preprocess.load_data import DataProcessor
 

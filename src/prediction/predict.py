@@ -4,7 +4,6 @@ from typing import TypeVar
 
 import pandas as pd
 
-from src.paths import RESULT_DIR
 from src.prediction.model import ItemKNNRecommender, SVDRecommender, UserKNNRecommender
 
 logger = TypeVar("logger")
