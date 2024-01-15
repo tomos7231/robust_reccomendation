@@ -17,13 +17,13 @@ def main(cfg: MyConfig):
     # データの読み込み
     train_df, test_df = DataProcessor(cfg.data.name, cfg.data.test_size, cfg.seed).run()
 
-    # # 評価値予測
-    # print("predict ratings...")
-    # predict_ratings(cfg, train_df, test_df, logger, cfg.prediction.model)
+    # 評価値予測
+    print("predict ratings...")
+    predict_ratings(cfg, train_df, test_df, logger, cfg.prediction.model)
 
-    # # 共分散行列の推定
-    # print("make covariance matrix...")
-    # make_covariance_matrix(cfg.optimization.delta, cfg.optimization.estimator)
+    # 共分散行列の推定
+    print("make covariance matrix...")
+    make_covariance_matrix(cfg.optimization.delta, cfg.optimization.estimator)
 
     # 最適化問題を解く
     print("optimize recommended item...")

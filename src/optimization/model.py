@@ -60,6 +60,9 @@ def model_optimize(
     # 実行時間は1分
     model.setParam("TimeLimit", 60)
 
+    # メッセージは表示しない
+    # model.setParam("OutputFlag", 0)
+
     # 最適化の実行
     try:
         model.optimize()

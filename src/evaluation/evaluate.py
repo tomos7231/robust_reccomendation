@@ -3,7 +3,6 @@ from __future__ import annotations
 import pickle
 from typing import TypeVar
 
-import numpy as np
 import pandas as pd
 
 from src.evaluation.metric import diversity, precision
