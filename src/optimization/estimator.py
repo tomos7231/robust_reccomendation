@@ -22,8 +22,6 @@ class ShrinkageEstimator(metaclass=ABCMeta):
     @staticmethod
     def load_data() -> pd.DataFrame:
         pred_rating_df = pd.read_csv("./pred_rating.csv")
-        pred_rating_df["user_id"] = pred_rating_df["user_id"].astype(int)
-        pred_rating_df["item_id"] = pred_rating_df["item_id"].astype(int)
         return pred_rating_df
 
     @abstractmethod

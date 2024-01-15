@@ -41,7 +41,7 @@ class RecommenderSystem(metaclass=ABCMeta):
         raise NotImplementedError
 
     @staticmethod
-    def make_dataset(train_df, test_df) -> tuple:
+    def make_dataset(train_df: pd.DataFrame, test_df: pd.DataFrame) -> tuple:
         max_rate = train_df["rating"].max()
         min_rate = train_df["rating"].min()
         rating_scale = (min_rate, max_rate)
@@ -61,7 +61,7 @@ class RecommenderSystem(metaclass=ABCMeta):
         model.fit(trainset)
 
     @staticmethod
-    def evaluate(model, testset, logger) -> None:
+    def evaluate(model, testset, logger: logger) -> None:
         predictions = model.test(testset)
         rmse = accuracy.rmse(predictions)
         logger.info(f"RMSE of Test Data: {rmse}")
@@ -70,7 +70,7 @@ class RecommenderSystem(metaclass=ABCMeta):
     def predict_ratings(train_df: pd.DataFrame, test_df: pd.DataFrame, model) -> pd.DataFrame:
         # 全ユーザーとアイテムの組み合わせを生成
         all_users = set(train_df["user_id"]).union(set(test_df["user_id"]))
-        all_items = set(train_df["item_id"]).union(set(test_df["item_id"]))
+        all_items = range(max(train_df["item_id"].max(), test_df["item_id"].max()) + 1)
         all_combinations = [(user, item) for user in all_users for item in all_items]
 
         # 結果を保存するリスト

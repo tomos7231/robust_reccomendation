@@ -5,7 +5,7 @@ import numpy as np
 from src.optimization.estimator import DiagonalEstimator, InputationEstimator
 
 
-def make_covariance_matrix(delta: float, estimator: str) -> np.ndarray:
+def make_covariance_matrix(delta: float, estimator: str) -> None:
     if estimator == "DIAG":
         estimator = DiagonalEstimator(delta)
     elif estimator == "INPUTE":

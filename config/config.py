@@ -9,7 +9,7 @@ class DataConfig:
 
 @dataclass
 class PredictionConfig:
-    model: str = "USERCF"  # or "ITEMCF" or "MF"
+    model: str = "MF"  # or "ITEMCF" or "MF"
     k: int = 5
     n_factors: int = 100
     n_epochs: int = 20
@@ -21,6 +21,12 @@ class PredictionConfig:
 class OptimizationConfig:
     delta: float = 0.5
     estimator: str = "DIAG"
+    alpha: float = 0.2
+    gamma_mu: int = 5
+    gamma_sigma: int = 50
+    c_mu: float = 1
+    c_sigma: float = 1
+    N: int = 10
 
 
 @dataclass

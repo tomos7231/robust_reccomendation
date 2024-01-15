@@ -11,7 +11,7 @@ logger = TypeVar("logger")
 
 def predict_ratings(
     cfg: dict, train_df: pd.DataFrame, test_df: pd.DataFrame, logger: logger, model_name: str
-):
+) -> None:
     if model_name == "MF":
         model = SVDRecommender(
             train_df,
