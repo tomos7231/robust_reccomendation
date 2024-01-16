@@ -5,7 +5,7 @@ from typing import TypeVar
 
 import pandas as pd
 
-from src.evaluation.metric import diversity, precision
+from src.evaluation.metric import calc_diversity, calc_precision
 
 logger = TypeVar("logger")
 
@@ -19,10 +19,12 @@ def evaluate(logger: logger) -> None:
     with open("./items_recommended.pkl", "rb") as f:
         items_recommended = pickle.load(f)
 
+    print(items_recommended[0])
+
     # Precisionの計算
-    precision = precision(items_recommended, pred_rating_df)
-    logger.info(f"Precision: {precision:.3f}")
+    precision = calc_precision(items_recommended, pred_rating_df)
+    logger.info(f"Precision: {precision:.5f}")
 
     # Diversityの計算
-    diversity = diversity(items_recommended)
-    logger.info(f"Diversity: {diversity:.3f}")
+    diversity = calc_diversity(items_recommended)
+    logger.info(f"Diversity: {diversity}")

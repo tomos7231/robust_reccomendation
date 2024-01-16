@@ -21,6 +21,10 @@ def model_optimize(
     # モデルの定義
     model = Model("robust_optimization")
 
+    print("I shae:", len(I))
+    print("mu shape:", mu.shape)
+    print("sigma shape:", sigma.shape)
+
     # 変数の定義
     w, p, q = dict(), dict(), dict()
     for i in I:
@@ -59,9 +63,6 @@ def model_optimize(
 
     # 実行時間は1分
     model.setParam("TimeLimit", 60)
-
-    # メッセージは表示しない
-    # model.setParam("OutputFlag", 0)
 
     # 最適化の実行
     try:
