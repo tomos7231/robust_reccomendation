@@ -5,6 +5,8 @@ from dataclasses import dataclass
 class DataConfig:
     name: str = "movielens"
     test_size: float = 0.2
+    min_count_rating: int = 50
+    thres_rating: float = 4.0
 
 
 @dataclass
@@ -19,8 +21,9 @@ class PredictionConfig:
 
 @dataclass
 class OptimizationConfig:
-    delta: float = 0.5
     estimator: str = "DIAG"
+    delta: float = 0.5
+    n_candidate: int = 50
     alpha: float = 0.2
     gamma_mu: int = 5
     gamma_sigma: int = 50

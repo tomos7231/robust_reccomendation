@@ -15,7 +15,9 @@ logger = logging.getLogger(__name__)
 @hydra.main(version_base=None, config_path="config/", config_name="config")
 def main(cfg: MyConfig):
     # データの読み込み
-    train_df, test_df = DataProcessor(cfg.data.name, cfg.data.test_size, cfg.seed).run()
+    train_df, test_df = DataProcessor(
+        cfg.data.name, cfg.data.test_size, cfg.data.min_count_rating, cfg.seed
+    ).run()
 
     # 評価値予測
     print("predict ratings...")
@@ -28,6 +30,7 @@ def main(cfg: MyConfig):
     # 最適化問題を解く
     print("optimize recommended item...")
     optimize(
+        cfg.optimization.n_candidate,
         cfg.optimization.alpha,
         cfg.optimization.gamma_mu,
         cfg.optimization.gamma_sigma,
@@ -38,7 +41,7 @@ def main(cfg: MyConfig):
 
     # 評価指標を計算
     print("evaluate recommended item...")
-    evaluate(logger)
+    evaluate(logger, cfg.data.thres_rating)
 
 
 if __name__ == "__main__":

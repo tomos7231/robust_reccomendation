@@ -3,7 +3,9 @@ import pandas as pd
 from tqdm import tqdm
 
 
-def calc_precision(items_recommended: dict, pred_rating_df: pd.DataFrame) -> float:
+def calc_precision(
+    items_recommended: dict, pred_rating_df: pd.DataFrame, thres_rating: float
+) -> float:
     """
     Precisionを計算する関数
     """
@@ -19,10 +21,12 @@ def calc_precision(items_recommended: dict, pred_rating_df: pd.DataFrame) -> flo
         item_ids = items_recommended[user]
         N = len(item_ids)
 
-        # user_dfでitem_idを探し、評価値が4以上かつdata_typeがtestならnum_correctを1増やす
+        # user_dfでitem_idを探し、評価値がthres_rating以上かつdata_typeがtestならnum_correctを1増やす
         for item_id in item_ids:
             pred_data = user_df[user_df["item_id"] == item_id]
-            if (pred_data["rating"].iloc[0] >= 4) and (pred_data["data_type"].iloc[0] == "test"):
+            if (pred_data["rating"].iloc[0] >= thres_rating) and (
+                pred_data["data_type"].iloc[0] == "test"
+            ):
                 num_correct += 1
 
         precisions.append(num_correct / N)

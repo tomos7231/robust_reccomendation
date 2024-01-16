@@ -10,7 +10,13 @@ from src.optimization.model import model_optimize
 
 
 def optimize(
-    alpha: float, gamma_mu: int, gamma_sigma: int, c_mu: float, c_sigma: float, N: int
+    n_candidate: int,
+    alpha: float,
+    gamma_mu: int,
+    gamma_sigma: int,
+    c_mu: float,
+    c_sigma: float,
+    N: int,
 ) -> None:
     """
     ユーザーごとに最適化問題を解く関数
@@ -29,8 +35,8 @@ def optimize(
         mu = user_df["rating"].values
         # 学習データは除く
         user_ntrain_df = user_df[user_df["data_type"] != "train"].reset_index(drop=True)
-        # Iはraring順に並び替えたitem_idの上位50個
-        I = user_ntrain_df.sort_values("rating", ascending=False)["item_id"].values[:50]
+        # Iはraring順に並び替えたitem_idの上位n_candidate個
+        I = user_ntrain_df.sort_values("rating", ascending=False)["item_id"].values[:n_candidate]
 
         # 最適化問題を解く
         w_opt, obj_val = model_optimize(
