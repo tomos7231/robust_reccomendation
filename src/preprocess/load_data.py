@@ -7,17 +7,18 @@ from src.paths import DATA_DIR
 
 
 class DataProcessor:
-    def __init__(self, dataset_name: str, test_size: float, seed: int = 42):
+    def __init__(self, dataset_name: str, test_size: float, min_count_rating: int, seed: int = 42):
         self.dataset_name = dataset_name
         self.seed = seed
         self.test_size = test_size
+        self.min_count_rating = min_count_rating
         self.seed = seed
 
     def run(self) -> None:
         # データの読み込み
         df = self.load_data(self.dataset_name)
         # データの前処理
-        df = self.filter_data(df)
+        df = self.filter_data(df, self.min_count_rating)
         # データの分割
         train_df, test_df = self.split_data(df, self.test_size, self.seed)
         return train_df, test_df
@@ -36,10 +37,10 @@ class DataProcessor:
             return df
 
     @staticmethod
-    def filter_data(df: pd.DataFrame) -> pd.DataFrame:
+    def filter_data(df: pd.DataFrame, min_count_rating: int) -> pd.DataFrame:
         # 評価値の数が多いユーザーのみを抽出
         user_counts = df["user_id"].value_counts()
-        user_counts = user_counts[user_counts >= 60].index.tolist()
+        user_counts = user_counts[user_counts >= min_count_rating].index.tolist()
         df = df[df["user_id"].isin(user_counts)].reset_index(drop=True)
 
         return df

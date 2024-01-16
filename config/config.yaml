@@ -7,6 +7,8 @@ hydra:
 data:
     name: "movielens"
     test_size: 0.4
+    min_count_rating: 50
+    thres_rating: 4
 prediction:
     model: "MF"
     k: 5
@@ -17,6 +19,7 @@ prediction:
 optimization:
     estimator: "DIAG"
     delta: 0.5
+    n_candidate: 50
     alpha: 0.2
     gamma_mu: 5
     gamma_sigma: 50

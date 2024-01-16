@@ -10,7 +10,7 @@ from src.evaluation.metric import calc_diversity, calc_precision
 logger = TypeVar("logger")
 
 
-def evaluate(logger: logger) -> None:
+def evaluate(logger: logger, thres_rating: float) -> None:
     """
     評価指標を計算する関数
     """
@@ -20,7 +20,7 @@ def evaluate(logger: logger) -> None:
         items_recommended = pickle.load(f)
 
     # Precisionの計算
-    precision = calc_precision(items_recommended, pred_rating_df)
+    precision = calc_precision(items_recommended, pred_rating_df, thres_rating)
     logger.info(f"Precision: {precision:.5f}")
 
     # Diversityの計算
