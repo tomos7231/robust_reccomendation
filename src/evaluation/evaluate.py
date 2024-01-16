@@ -19,8 +19,6 @@ def evaluate(logger: logger) -> None:
     with open("./items_recommended.pkl", "rb") as f:
         items_recommended = pickle.load(f)
 
-    print(items_recommended[0])
-
     # Precisionの計算
     precision = calc_precision(items_recommended, pred_rating_df)
     logger.info(f"Precision: {precision:.5f}")

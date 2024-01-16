@@ -27,8 +27,6 @@ def calc_precision(items_recommended: dict, pred_rating_df: pd.DataFrame) -> flo
 
         precisions.append(num_correct / N)
 
-        print(precisions)
-
     return np.mean(precisions)
 
 
