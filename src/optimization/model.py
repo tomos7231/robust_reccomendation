@@ -63,6 +63,8 @@ def model_optimize(
 
     # 実行時間は1分
     model.setParam("TimeLimit", 60)
+    # ログはコンソールには出すが、ファイルには出さない
+    model.setParam("OutputFlag", 0)
 
     # 最適化の実行
     try:
