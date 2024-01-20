@@ -46,14 +46,14 @@ class DiagonalEstimator(ShrinkageEstimator):
         train_df = self.pred_rating_df.query("data_type == 'train'").reset_index(drop=True)
 
         # user*itemの行列を作成
-        matrix_user_item = train_df.pivot_table(
-            index="user_id", columns="item_id", values="rating", fill_value=0
-        )
+        matrix_user_item = train_df.pivot_table(index="user_id", columns="item_id", values="rating")
         # trainだけのデータだとitemidが不連続になるので、全てのitemidを含むようにする
-        matrix_user_item = matrix_user_item.reindex(columns=all_item_ids, fill_value=0)
+        matrix_user_item = matrix_user_item.reindex(columns=all_item_ids, fill_value=np.nan)
 
         # 共分散行列の計算
         S = matrix_user_item.cov().values
+        # 欠損値を0にする
+        S = np.nan_to_num(S, nan=0.0)
         # Sの対角成分のみを取り出す
         F = np.diag(np.diag(S))
 
@@ -72,21 +72,22 @@ class InputationEstimator(ShrinkageEstimator):
         train_df = self.pred_rating_df.query("data_type == 'train'").reset_index(drop=True)
 
         # user*itemの行列を作成
-        matrix_user_item = train_df.pivot_table(
-            index="user_id", columns="item_id", values="rating", fill_value=0
-        )
+        matrix_user_item = train_df.pivot_table(index="user_id", columns="item_id", values="rating")
         # trainだけのデータだとitemidが不連続になるので、全てのitemidを含むようにする
-        matrix_user_item = matrix_user_item.reindex(columns=all_item_ids, fill_value=0)
+        matrix_user_item = matrix_user_item.reindex(columns=all_item_ids, fill_value=np.nan)
 
         # 共分散行列の計算
         S = matrix_user_item.cov().values
-
+        # 欠損値を0にする
+        S = np.nan_to_num(S, nan=0.0)
         # 全てのデータで共分散行列を計算
         matrix_user_item_all = self.pred_rating_df.pivot_table(
-            index="user_id", columns="item_id", values="rating", fill_value=0
+            index="user_id", columns="item_id", values="rating"
         )
         # なくてもいいかも
-        matrix_user_item_all = matrix_user_item_all.reindex(columns=all_item_ids, fill_value=0)
+        matrix_user_item_all = matrix_user_item_all.reindex(columns=all_item_ids, fill_value=np.nan)
         F = matrix_user_item_all.cov().values
+        # 欠損値を0にする
+        F = np.nan_to_num(F, nan=0.0)
 
         return S, F

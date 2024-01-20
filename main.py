@@ -41,7 +41,7 @@ def main(cfg: MyConfig):
 
     # 評価指標を計算
     print("evaluate recommended item...")
-    evaluate(logger, cfg.data.thres_rating)
+    evaluate(logger, test_df, cfg.data.thres_rating)
 
 
 if __name__ == "__main__":

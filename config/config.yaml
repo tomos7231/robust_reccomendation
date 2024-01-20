@@ -10,7 +10,7 @@ data:
     min_count_rating: 50
     thres_rating: 4
 prediction:
-    model: "MF"
+    model: "ITEMCF"
     k: 5
     n_factors: 100
     lr_all: 0.01
@@ -24,7 +24,7 @@ optimization:
     gamma_mu: 5
     gamma_sigma: 50
     c_mu: 1
-    c_sigma: 1
+    c_sigma: 0.1
     N: 10
 seed: 42
 name: default
