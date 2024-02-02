@@ -4,7 +4,12 @@ from typing import TypeVar
 
 import pandas as pd
 
-from src.prediction.model import ItemKNNRecommender, SVDRecommender, UserKNNRecommender
+from src.prediction.model import (
+    ItemKNNRecommender,
+    NMFRecommender,
+    SVDRecommender,
+    UserKNNRecommender,
+)
 
 logger = TypeVar("logger")
 
@@ -21,6 +26,14 @@ def predict_ratings(
             cfg.prediction.n_epochs,
             cfg.prediction.lr_all,
             cfg.prediction.reg_all,
+        )
+    elif model_name == "NMF":
+        model = NMFRecommender(
+            train_df,
+            test_df,
+            logger,
+            cfg.prediction.n_factors,
+            cfg.prediction.n_epochs,
         )
     elif model_name == "USERCF":
         model = UserKNNRecommender(train_df, test_df, logger, cfg.prediction.k)

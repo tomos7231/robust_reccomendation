@@ -4,7 +4,7 @@ from abc import ABCMeta, abstractmethod
 from typing import TypeVar
 
 import pandas as pd
-from surprise import SVD, Dataset, KNNBasic, Reader, accuracy
+from surprise import NMF, SVD, Dataset, KNNBasic, Reader, accuracy
 from tqdm import tqdm
 
 logger = TypeVar("logger")
@@ -124,6 +124,24 @@ class SVDRecommender(RecommenderSystem):
             lr_all=self.lr_all,
             reg_all=self.reg_all,
         )
+        return model
+
+
+class NMFRecommender(RecommenderSystem):
+    def __init__(
+        self,
+        train_df: pd.DataFrame,
+        test_df: pd.DataFrame,
+        logger: logger,
+        n_factors: int,
+        n_epochs: int,
+    ):
+        super().__init__(train_df, test_df, logger)
+        self.n_factors = n_factors
+        self.n_epochs = n_epochs
+
+    def build_model(self):
+        model = NMF(n_factors=self.n_factors, n_epochs=self.n_epochs, biased=True)
         return model
 
 

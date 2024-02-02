@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import math
+
 import numpy as np
 from gurobipy import GRB, GurobiError, Model, quicksum
 
@@ -21,14 +23,12 @@ def model_optimize(
     # モデルの定義
     model = Model("robust_optimization")
 
-    print("I shae:", len(I))
-    print("mu shape:", mu.shape)
-    print("sigma shape:", sigma.shape)
+    print("candidate items:", len(I))
 
     # 変数の定義
     w, p, q = dict(), dict(), dict()
     for i in I:
-        w[i] = model.addVar(vtype=GRB.BINARY, name=f"w_{i}")
+        w[i] = model.addVar(lb=0, ub=1, vtype=GRB.BINARY, name=f"w_{i}")
         p[i] = model.addVar(lb=0, vtype=GRB.CONTINUOUS, name=f"p_{i}")
         for j in I:
             q[i, j] = model.addVar(lb=0, vtype=GRB.CONTINUOUS, name=f"q_{i}_{j}")
@@ -55,14 +55,13 @@ def model_optimize(
 
     # 不確実性の範囲の定義
     for i in I:
-        model.addConstr(c_mu * sigma[i, i] * w[i] <= z + p[i], name=f"mu_{i}")
+        model.addConstr(c_mu * math.sqrt(sigma[i, i]) * w[i] <= z + p[i], name=f"mu_{i}")
         for j in I:
             model.addConstr(
                 c_sigma * sigma[i, j] * w[i] * w[j] <= g + q[i, j], name=f"sigma_{i}_{j}"
             )
-
-    # 実行時間は1分
-    model.setParam("TimeLimit", 60)
+    # INFO loggerを無効化
+    model.setParam("LogToConsole", 0)
     # ログはコンソールには出すが、ファイルには出さない
     model.setParam("OutputFlag", 0)
 
