@@ -23,7 +23,12 @@ def model_optimize(
     # モデルの定義
     model = Model("robust_optimization")
 
-    print("candidate items:", len(I))
+    # INFO loggerを無効化
+    model.setParam("LogToConsole", 0)
+    # ログはコンソールには出すが、ファイルには出さない
+    model.setParam("OutputFlag", 0)
+    # 最適化時間の制限を1秒に設定
+    model.setParam("TimeLimit", 2)
 
     # 変数の定義
     w, p, q = dict(), dict(), dict()
@@ -60,10 +65,6 @@ def model_optimize(
             model.addConstr(
                 c_sigma * sigma[i, j] * w[i] * w[j] <= g + q[i, j], name=f"sigma_{i}_{j}"
             )
-    # INFO loggerを無効化
-    model.setParam("LogToConsole", 0)
-    # ログはコンソールには出すが、ファイルには出さない
-    model.setParam("OutputFlag", 0)
 
     # 最適化の実行
     try:

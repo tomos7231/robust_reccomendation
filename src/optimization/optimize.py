@@ -48,7 +48,7 @@ def optimize(
         )
         # 推薦したアイテムのid
         item_ids = I[w_opt >= 0.95]
-        print(len(item_ids))
+
         # 結果を格納
         items_recommended[user] = item_ids
 

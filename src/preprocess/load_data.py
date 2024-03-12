@@ -19,6 +19,7 @@ class DataProcessor:
         df = self.load_data(self.dataset_name)
         # データの前処理
         df = self.filter_data(df, self.min_count_rating)
+        print(df.shape)
         # データの分割
         train_df, test_df = self.split_data(df, self.test_size, self.seed)
         return train_df, test_df

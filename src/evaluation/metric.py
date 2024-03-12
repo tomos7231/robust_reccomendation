@@ -53,6 +53,27 @@ def calc_recall(items_recommended: dict, test_df: pd.DataFrame, thres_rating: fl
     return np.mean(recalls)
 
 
+def calc_var_hit_item(items_recommended: dict, test_df: pd.DataFrame, thres_rating: float) -> float:
+    """
+    利用者ごとのヒットアイテムの分散を計算する関数
+    """
+    hit_items = list()
+
+    for user in tqdm(items_recommended.keys()):
+        num_correct = 0
+
+        # ユーザーごとに評価が閾値以上のアイテムを抽出
+        user_df = test_df[
+            (test_df["user_id"] == user) & (test_df["rating"] >= thres_rating)
+        ].reset_index(drop=True)
+        # user_dfのitem_idがどれだけ推薦したアイテムに含まれているかを計算
+        num_correct = len(set(user_df["item_id"]).intersection(set(items_recommended[user])))
+
+        hit_items.append(num_correct)
+
+    return np.var(hit_items)
+
+
 def calc_diversity(items_recommended: dict) -> int:
     """
     多様性を計算する関数

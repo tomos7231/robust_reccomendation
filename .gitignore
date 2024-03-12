@@ -162,4 +162,5 @@ cython_debug/
 data/
 result/
 notebook/
+multirun/
 *.DS_Store

@@ -5,7 +5,7 @@ from typing import TypeVar
 
 import pandas as pd
 
-from src.evaluation.metric import calc_diversity, calc_precision, calc_recall
+from src.evaluation.metric import calc_diversity, calc_precision, calc_recall, calc_var_hit_item
 
 logger = TypeVar("logger")
 
@@ -26,6 +26,14 @@ def evaluate(logger: logger, test_df: pd.DataFrame, N: int, thres_rating: float)
     recall = calc_recall(items_recommended, test_df, thres_rating)
     logger.info(f"Recall: {recall:.5f}")
 
+    # precisionとrecallからf1を計算
+    f1 = 2 * (precision * recall) / (precision + recall)
+    logger.info(f"F1: {f1:.5f}")
+
     # Diversityの計算
     diversity = calc_diversity(items_recommended)
     logger.info(f"Diversity: {diversity}")
+
+    # ヒットアイテムの分散の計算
+    var_hit_item = calc_var_hit_item(items_recommended, test_df, thres_rating)
+    logger.info(f"Var of hit item: {var_hit_item}")
