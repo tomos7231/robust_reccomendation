@@ -57,7 +57,9 @@ def calc_recall(items_recommended: dict, test_df: pd.DataFrame, thres_rating: fl
     return np.mean(recalls)
 
 
-def calc_var_hit_item(items_recommended: dict, test_df: pd.DataFrame, thres_rating: float) -> float:
+def calc_var_hit_item(
+    items_recommended: dict, test_df: pd.DataFrame, thres_rating: float
+) -> float:
     """
     利用者ごとのヒットアイテムの分散を計算する関数
     """

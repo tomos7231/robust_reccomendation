@@ -4,7 +4,6 @@ from abc import ABCMeta, abstractmethod
 
 import numpy as np
 import pandas as pd
-from tqdm import tqdm
 
 
 class ShrinkageEstimator(metaclass=ABCMeta):
@@ -67,7 +66,9 @@ class DiagonalEstimator(ShrinkageEstimator):
         )
 
         # user*itemの行列を作成
-        matrix_user_item = train_df.pivot_table(index="user_id", columns="item_id", values="rating")
+        matrix_user_item = train_df.pivot_table(
+            index="user_id", columns="item_id", values="rating"
+        )
         # trainだけのデータだとitemidが不連続になるので、全てのitemidを含むようにする
         matrix_user_item = matrix_user_item.reindex(columns=all_item_ids, fill_value=np.nan)
 
@@ -93,7 +94,9 @@ class InputationEstimator(ShrinkageEstimator):
         train_df = self.pred_rating_df.query("data_type == 'train'").reset_index(drop=True)
 
         # user*itemの行列を作成
-        matrix_user_item = train_df.pivot_table(index="user_id", columns="item_id", values="rating")
+        matrix_user_item = train_df.pivot_table(
+            index="user_id", columns="item_id", values="rating"
+        )
         # trainだけのデータだとitemidが不連続になるので、全てのitemidを含むようにする
         matrix_user_item = matrix_user_item.reindex(columns=all_item_ids, fill_value=np.nan)
 
@@ -106,7 +109,9 @@ class InputationEstimator(ShrinkageEstimator):
             index="user_id", columns="item_id", values="rating"
         )
         # なくてもいいかも
-        matrix_user_item_all = matrix_user_item_all.reindex(columns=all_item_ids, fill_value=np.nan)
+        matrix_user_item_all = matrix_user_item_all.reindex(
+            columns=all_item_ids, fill_value=np.nan
+        )
         F = matrix_user_item_all.cov().values
         # 欠損値を0にする
         F = np.nan_to_num(F, nan=0.0)

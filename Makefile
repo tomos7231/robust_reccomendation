@@ -1,10 +1,9 @@
-.PHONY: env format
-export PYTHONPATH := $(PWD)
+.PHONY: format lint run-all
 
-env:
-	pip install poetry
-	poetry install
-
+# ruffでフォーマットを行う
 format:
-	poetry run isort . & poetry run black .
-	poetry run autoflake -ri --remove-all-unused-imports --ignore-init-module-imports --remove-unused-variables .
+	rye run ruff format
+
+# ruffでlintとフォーマットを行う
+lint:
+	rye run ruff check --fix
