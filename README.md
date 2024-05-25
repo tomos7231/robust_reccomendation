@@ -10,7 +10,7 @@ If you want to use this repository, please run the following command.
 ```
 rye config --set-bool behavior.use-uv=true
 ```
-1. create a virtual environment
+3. create a virtual environment
 ```
 rye sync
 ```
