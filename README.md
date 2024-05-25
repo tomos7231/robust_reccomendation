@@ -20,7 +20,7 @@ This repository is using hydra. So, you can change hyperparameter in command lin
 For example, if you want to change the number of epochs, you can run the following command.
 
 ```python
-$poetry run python3 main.py name=exp001 prediction.epoch=100
+$rye run python3 main.py name=exp001 prediction.epoch=100
 ```
 
 ## Code Formatting
