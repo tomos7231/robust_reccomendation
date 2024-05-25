@@ -123,6 +123,7 @@ class SVDRecommender(RecommenderSystem):
             n_epochs=self.n_epochs,
             lr_all=self.lr_all,
             reg_all=self.reg_all,
+            random_state=40,
         )
         return model
 
@@ -141,7 +142,7 @@ class NMFRecommender(RecommenderSystem):
         self.n_epochs = n_epochs
 
     def build_model(self):
-        model = NMF(n_factors=self.n_factors, n_epochs=self.n_epochs, biased=True)
+        model = NMF(n_factors=self.n_factors, n_epochs=self.n_epochs, biased=True, random_state=42)
         return model
 
 

@@ -13,7 +13,8 @@ def make_covariance_matrix(delta: float, estimator: str) -> None:
     else:
         raise Exception("Unknown estimator name: {}".format(estimator))
 
-    cov_matrix = estimator.run()
+    cov_matrix, freq_matrix = estimator.run()
 
     # 保存
     np.save("./cov_matrix.npy", cov_matrix)
+    np.save("./freq_matrix.npy", freq_matrix)

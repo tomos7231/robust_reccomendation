@@ -5,26 +5,26 @@ hydra:
     dir: ./result/${name}
 
 data:
-    name: "movielens"
+    name: "movielens" # movielens or r3 or book
     test_size: 0.4
-    min_count_rating: 50
+    min_count_rating: 50 # movielensなら50、r3なら1
     thres_rating: 4
 prediction:
     model: "MF"
     k: 5
-    n_factors: 150
+    n_factors: 100
     lr_all: 0.01
     n_epochs: 20
     reg_all: 0.1
 optimization:
-    estimator: "DIAG"
+    estimator: "INPUTE"
     delta: 0.5
     n_candidate: 50
     alpha: 0.2
-    gamma_mu: 10
-    gamma_sigma: 60
-    c_mu: 1
+    gamma_mu: 8
+    gamma_sigma: 100
+    c_mu: 1.0
     c_sigma: 0.2
     N: 10
 seed: 42
-name: default
+name: default_mv

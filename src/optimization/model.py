@@ -10,6 +10,7 @@ def model_optimize(
     I: list[int],
     mu: np.ndarray,
     sigma: np.ndarray,
+    freq: np.ndarray,
     alpha: float,
     gamma_mu: int,
     gamma_sigma: int,
@@ -28,7 +29,7 @@ def model_optimize(
     # ログはコンソールには出すが、ファイルには出さない
     model.setParam("OutputFlag", 0)
     # 最適化時間の制限を1秒に設定
-    model.setParam("TimeLimit", 2)
+    model.setParam("TimeLimit", 5)
 
     # 変数の定義
     w, p, q = dict(), dict(), dict()
@@ -60,11 +61,28 @@ def model_optimize(
 
     # 不確実性の範囲の定義
     for i in I:
-        model.addConstr(c_mu * math.sqrt(sigma[i, i]) * w[i] <= z + p[i], name=f"mu_{i}")
+        model.addConstr(
+            (c_mu * math.sqrt(sigma[i, i]) * w[i]) / math.sqrt(freq[i, i] + 1) <= z + p[i],
+            name=f"mu_{i}",
+        )
         for j in I:
             model.addConstr(
-                c_sigma * sigma[i, j] * w[i] * w[j] <= g + q[i, j], name=f"sigma_{i}_{j}"
+                (c_sigma * abs(sigma[i, j]) * w[i] * w[j]) / math.sqrt(freq[i, j] + 1)
+                <= g + q[i, j],
+                name=f"sigma_{i}_{j}",
             )
+
+    # # 不確実性の範囲の定義
+    # for i in I:
+    #     model.addConstr(
+    #         c_mu * math.sqrt(sigma[i, i]) * w[i] <= z + p[i],
+    #         name=f"mu_{i}",
+    #     )
+    #     for j in I:
+    #         model.addConstr(
+    #             c_sigma * sigma[i, j] * w[i] * w[j] <= g + q[i, j],
+    #             name=f"sigma_{i}_{j}",
+    #         )
 
     # 最適化の実行
     try:

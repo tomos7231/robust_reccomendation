@@ -5,17 +5,31 @@ from typing import TypeVar
 
 import pandas as pd
 
-from src.evaluation.metric import calc_diversity, calc_precision, calc_recall, calc_var_hit_item
+from src.evaluation.metric import (
+    calc_diversity,
+    calc_gini,
+    calc_precision,
+    calc_recall,
+    calc_var_hit_item,
+    calc_var_recommended,
+)
 
 logger = TypeVar("logger")
 
 
-def evaluate(logger: logger, test_df: pd.DataFrame, N: int, thres_rating: float) -> None:
+def evaluate(
+    logger: logger,
+    train_df: pd.DataFrame,
+    test_df: pd.DataFrame,
+    N: int,
+    thres_rating: float,
+    suffix_rec: str,
+) -> None:
     """
     評価指標を計算する関数
     """
     # データの読み込み
-    with open("./items_recommended.pkl", "rb") as f:
+    with open(f"./items_recommended{suffix_rec}.pkl", "rb") as f:
         items_recommended = pickle.load(f)
 
     # Precisionの計算
@@ -37,3 +51,11 @@ def evaluate(logger: logger, test_df: pd.DataFrame, N: int, thres_rating: float)
     # ヒットアイテムの分散の計算
     var_hit_item = calc_var_hit_item(items_recommended, test_df, thres_rating)
     logger.info(f"Var of hit item: {var_hit_item}")
+
+    # 推薦回数の分散の計算
+    var_recommended = calc_var_recommended(items_recommended, train_df, test_df)
+    logger.info(f"Var of recommended: {var_recommended}")
+
+    # Gini係数の計算
+    gini = calc_gini(items_recommended, train_df, test_df)
+    logger.info(f"Gini: {gini}")

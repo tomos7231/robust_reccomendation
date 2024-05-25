@@ -17,13 +17,15 @@ def optimize(
     c_mu: float,
     c_sigma: float,
     N: int,
-) -> None:
+    seed: int,
+) -> str:
     """
     ユーザーごとに最適化問題を解く関数
     """
     # データの読み込み
     pred_rating_df = pd.read_csv("./pred_rating.csv")
     sigma_ar = np.load("./cov_matrix.npy")
+    freq_ar = np.load("./freq_matrix.npy")
 
     # ユーザーごとに最適化問題を解く
     items_recommended = dict()
@@ -44,14 +46,16 @@ def optimize(
 
         # 最適化問題を解く
         w_opt, obj_val = model_optimize(
-            I, mu, sigma_ar, alpha, gamma_mu, gamma_sigma, c_mu, c_sigma, N
+            I, mu, sigma_ar, freq_ar, alpha, gamma_mu, gamma_sigma, c_mu, c_sigma, N
         )
         # 推薦したアイテムのid
-        item_ids = I[w_opt >= 0.95]
+        item_ids = I[w_opt >= 0.99]
 
         # 結果を格納
         items_recommended[user] = item_ids
 
-    # items_reccomendedを保存
-    with open("./items_recommended.pkl", "wb") as f:
+    # seed_gamma_mu_gamma_sigmaのsuffixをつけて保存
+    suffix = f"_{seed}_{gamma_mu}_{gamma_sigma}"
+
+    with open(f"./items_recommended{suffix}.pkl", "wb") as f:
         pickle.dump(items_recommended, f)

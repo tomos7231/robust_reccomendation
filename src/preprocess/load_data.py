@@ -21,7 +21,7 @@ class DataProcessor:
         df = self.filter_data(df, self.min_count_rating)
         print(df.shape)
         # データの分割
-        train_df, test_df = self.split_data(df, self.test_size, self.seed)
+        train_df, test_df = self.split_data(df, self.test_size, self.dataset_name, self.seed)
         return train_df, test_df
 
     @staticmethod
@@ -37,6 +37,17 @@ class DataProcessor:
             df["item_id"] -= 1
             return df
 
+        elif dataset_name == "r3":
+            df = pd.read_csv(DATA_DIR / "r3.csv")
+            # # user_id and item_id start from 0
+            # df["user_id"] -= 1
+            # df["item_id"] -= 1
+            return df
+
+        elif dataset_name == "book":
+            df = pd.read_csv(DATA_DIR / "book.csv")
+            return df
+
     @staticmethod
     def filter_data(df: pd.DataFrame, min_count_rating: int) -> pd.DataFrame:
         # 評価値の数が多いユーザーのみを抽出
@@ -47,8 +58,29 @@ class DataProcessor:
         return df
 
     @staticmethod
-    def split_data(df: pd.DataFrame, test_size: float, seed: int) -> pd.DataFrame:
-        train_df, test_df = train_test_split(
-            df, test_size=test_size, random_state=seed, stratify=df["user_id"]
-        )
-        return train_df, test_df
+    def split_data(
+        df: pd.DataFrame, test_size: float, dataset_name: str, seed: int
+    ) -> pd.DataFrame:
+        if dataset_name == "movielens":
+            train_df, test_df = train_test_split(
+                df, test_size=test_size, random_state=seed, stratify=df["user_id"]
+            )
+            return train_df, test_df
+
+        elif dataset_name == "r3":
+            # dataのカラムで分割
+            train_df = df[df["data"] == "train"].drop("data", axis=1).reset_index(drop=True)
+            test_df = df[df["data"] == "test"].drop("data", axis=1).reset_index(drop=True)
+            return train_df, test_df
+
+        elif dataset_name == "book":
+            # # まずuser_idを1000個サンプリングし、そのuser_idに対応するデータを抽出
+            # user_ids = df["user_id"].unique()
+            # np.random.seed(seed)
+            # sampled_user_ids = np.random.choice(user_ids, 1000, replace=False)
+            # _df = df[df["user_id"].isin(sampled_user_ids)].reset_index(drop=True)
+            # train_test_split
+            train_df, test_df = train_test_split(
+                df, test_size=test_size, random_state=seed, stratify=df["user_id"]
+            )
+            return train_df, test_df
