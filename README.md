@@ -1,4 +1,5 @@
-# robust_recommendation
+# Robust portfolio optimization for recommender systems considering uncertainty of estimated statistics
+- https://arxiv.org/pdf/2406.10250
 
 ## Setup
 This repository is using rye.  
