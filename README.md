@@ -1,5 +1,5 @@
 # Robust portfolio optimization for recommender systems considering uncertainty of estimated statistics
-- [https://arxiv.org/pdf/2406.10250](https://link.springer.com/chapter/10.1007/978-981-96-0125-7_36)
+- https://link.springer.com/chapter/10.1007/978-981-96-0125-7_36
 
 This repository contains the code used for the experiments in "Robust portfolio optimization for recommender systems considering uncertainty of estimated statistics" (PRICAI 2024)
 
